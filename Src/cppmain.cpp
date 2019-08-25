@@ -12,6 +12,7 @@
 #include "stm32_easy_can/stm32_easy_can.h"
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 #include "stm32_velocity/stm32_velocity.hpp"
+#include "pid/pid.hpp"
 
 static int md_id = 0;
 static int g_velocity[2] = {};
