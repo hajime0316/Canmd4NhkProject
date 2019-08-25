@@ -36,6 +36,11 @@ void setup(void) {
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
 
+    // Debug Output
+    stm32_printf("\r\n...\r\n");
+    stm32_printf("md id = %d\r\n", md_id);
+    stm32_printf("Setup routine start.\r\n");
+
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
     stm32_printf("Setup routine was finished!\r\n");
