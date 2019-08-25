@@ -31,7 +31,7 @@ void setup(void) {
     canmd_manager_init();
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
-    stm32_easy_can_init(&hcan, 1, 0X7FF);   // TODO: 1をmd_idに変える
+    stm32_easy_can_init(&hcan, md_id, 0X7FF);
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
