@@ -6,6 +6,9 @@
 #include "usart.h"
 #include "gpio.h"
 
+// モジュールのインクルード
+#include "stm32_printf/stm32_printf.h"
+
 void setup(void) {
 
 }
