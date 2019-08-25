@@ -150,7 +150,7 @@ void stm32_easy_can_interrupt_handler(void)
 	// 受信データ処理
     MdDataType receive_md_data_type
         = canmd_manager_set_can_receive_data(receive_message, receive_dlc);
-/*
+
     // 送信データ生成
     int transmit_id;
     int transmit_dlc;
@@ -169,7 +169,7 @@ void stm32_easy_can_interrupt_handler(void)
     }
     else {
         // エンコーダのカウント値を送信メッセージとする
-        static Stm32Velocity divided_encoder_count[2] = {&htim2, &htim3};
+        static Stm32Velocity divided_encoder_count[2] = {&htim4, &htim19};
         for(int i = 0; i < 2; i++) {
             divided_encoder_count[i].periodic_calculate_velocity();
         }
@@ -183,6 +183,6 @@ void stm32_easy_can_interrupt_handler(void)
 
     // データ送信
     stm32_easy_can_transmit_message(transmit_id, transmit_dlc, transmit_message);
-*/
+
 	return;
 }
