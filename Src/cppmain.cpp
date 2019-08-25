@@ -13,15 +13,34 @@
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 #include "stm32_velocity/stm32_velocity.hpp"
 
+static int md_id = 0;
+
 void setup(void) {
+    // md_id初期化
+    md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
+          | HAL_GPIO_ReadPin(DIP_SW_3_GPIO_Port, DIP_SW_3_Pin) << 2
+          | HAL_GPIO_ReadPin(DIP_SW_2_GPIO_Port, DIP_SW_2_Pin) << 1
+          | HAL_GPIO_ReadPin(DIP_SW_1_GPIO_Port, DIP_SW_1_Pin) << 0;
+
+    if(md_id == 0) {
+        md_id = 0X7FF;
+
+        // TODO: ここにLEDによるエラー表示の処理を入れる
+    }
+
     // ソフトウェアモジュール初期化
     canmd_manager_init();
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
-    stm32_easy_can_init(&hcan, 1, 0X7FF);   // TODO: 1をmd_idに変える
+    stm32_easy_can_init(&hcan, md_id, 0X7FF);
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
+
+    // Debug Output
+    stm32_printf("\r\n...\r\n");
+    stm32_printf("md id = %d\r\n", md_id);
+    stm32_printf("Setup routine start.\r\n");
 
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
@@ -42,7 +61,7 @@ void loop(void) {
 
     // デバッグ出力
     stm32_printf("%5d  %5d  ", motor_control_data[0], motor_control_data[1]);
-    // stm32_printf("%3d  ", md_id);
+    stm32_printf("%3d  ", md_id);
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
         stm32_printf("%2d  ",motor_setup_data[i].control_mode);
