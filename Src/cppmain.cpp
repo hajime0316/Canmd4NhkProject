@@ -11,16 +11,37 @@
 #include "canmd_manager/canmd_manager.h"
 #include "stm32_easy_can/stm32_easy_can.h"
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
+#include "stm32_velocity/stm32_velocity.hpp"
+
+static int md_id = 0;
+static int g_velocity[2] = {};
 
 void setup(void) {
+    // md_id初期化
+    md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
+          | HAL_GPIO_ReadPin(DIP_SW_3_GPIO_Port, DIP_SW_3_Pin) << 2
+          | HAL_GPIO_ReadPin(DIP_SW_2_GPIO_Port, DIP_SW_2_Pin) << 1
+          | HAL_GPIO_ReadPin(DIP_SW_1_GPIO_Port, DIP_SW_1_Pin) << 0;
+
+    if(md_id == 0) {
+        md_id = 0X7FF;
+
+        // TODO: ここにLEDによるエラー表示の処理を入れる
+    }
+
     // ソフトウェアモジュール初期化
     canmd_manager_init();
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
-    stm32_easy_can_init(&hcan, 1, 0X7FF);   // TODO: 1をmd_idに変える
+    stm32_easy_can_init(&hcan, md_id, 0X7FF);
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
+
+    // Debug Output
+    stm32_printf("\r\n...\r\n");
+    stm32_printf("md id = %d\r\n", md_id);
+    stm32_printf("Setup routine start.\r\n");
 
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
@@ -41,14 +62,14 @@ void loop(void) {
 
     // デバッグ出力
     stm32_printf("%5d  %5d  ", motor_control_data[0], motor_control_data[1]);
-    // stm32_printf("%3d  ", md_id);
+    stm32_printf("%3d  ", md_id);
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
         stm32_printf("%2d  ",motor_setup_data[i].control_mode);
         stm32_printf("%4d  ", motor_setup_data[i].kp);
         stm32_printf("%4d  ", motor_setup_data[i].ki);
         stm32_printf("%4d  ", motor_setup_data[i].kd);
-        // stm32_printf("%4d", g_velocity[i]);
+        stm32_printf("%4d", g_velocity[i]);
     }
     stm32_printf("\r\n");
 }
@@ -69,19 +90,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // モーターセットアップデータの取得
         MotorSetupData motor_setup_data[2];
         canmd_manager_get_motor_setup_data(motor_setup_data);
+
+        // velocityモジュールの作成
+        static Stm32Velocity velocity_module[2] = {{&htim4, 0}, {&htim19, 0}};
+        // 速度計算
+        for (int i = 0; i < 2; i++){
+            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
+        }
 /*
         // PIDモジュールを作成
         static Pid pid_module[2] = {
             {(double)motor_setup_data[0].kp, (double)motor_setup_data[0].ki, (double)motor_setup_data[0].kd},
             {(double)motor_setup_data[1].kp, (double)motor_setup_data[1].ki, (double)motor_setup_data[1].kd}
         };
-
-        // velocityモジュールの作成
-        static Stm32Velocity velocity_module[2] = {{&htim2, 0}, {&htim3, 0}};
-        // 速度計算
-        for (int i = 0; i < 2; i++){
-            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
-        }
 
         for (int i = 0; i < 2; i++)
         {
@@ -149,7 +170,7 @@ void stm32_easy_can_interrupt_handler(void)
 	// 受信データ処理
     MdDataType receive_md_data_type
         = canmd_manager_set_can_receive_data(receive_message, receive_dlc);
-/*
+
     // 送信データ生成
     int transmit_id;
     int transmit_dlc;
@@ -168,7 +189,7 @@ void stm32_easy_can_interrupt_handler(void)
     }
     else {
         // エンコーダのカウント値を送信メッセージとする
-        static Stm32Velocity divided_encoder_count[2] = {&htim2, &htim3};
+        static Stm32Velocity divided_encoder_count[2] = {&htim4, &htim19};
         for(int i = 0; i < 2; i++) {
             divided_encoder_count[i].periodic_calculate_velocity();
         }
@@ -182,6 +203,6 @@ void stm32_easy_can_interrupt_handler(void)
 
     // データ送信
     stm32_easy_can_transmit_message(transmit_id, transmit_dlc, transmit_message);
-*/
+
 	return;
 }

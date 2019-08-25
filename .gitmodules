@@ -10,3 +10,6 @@
 [submodule "Src/stm32_antiphase_pwm"]
 	path = Src/stm32_antiphase_pwm
 	url = https://github.com/hajime0316/stm32_antiphase_pwm.git
+[submodule "Src/stm32_velocity"]
+	path = Src/stm32_velocity
+	url = https://github.com/hajime0316/stm32_velocity.git
