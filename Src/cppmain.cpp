@@ -14,6 +14,7 @@
 #include "stm32_velocity/stm32_velocity.hpp"
 
 static int md_id = 0;
+static int g_velocity[2] = {};
 
 void setup(void) {
     // md_id初期化
@@ -68,7 +69,7 @@ void loop(void) {
         stm32_printf("%4d  ", motor_setup_data[i].kp);
         stm32_printf("%4d  ", motor_setup_data[i].ki);
         stm32_printf("%4d  ", motor_setup_data[i].kd);
-        // stm32_printf("%4d", g_velocity[i]);
+        stm32_printf("%4d", g_velocity[i]);
     }
     stm32_printf("\r\n");
 }
@@ -89,19 +90,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // モーターセットアップデータの取得
         MotorSetupData motor_setup_data[2];
         canmd_manager_get_motor_setup_data(motor_setup_data);
+
+        // velocityモジュールの作成
+        static Stm32Velocity velocity_module[2] = {{&htim4, 0}, {&htim19, 0}};
+        // 速度計算
+        for (int i = 0; i < 2; i++){
+            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
+        }
 /*
         // PIDモジュールを作成
         static Pid pid_module[2] = {
             {(double)motor_setup_data[0].kp, (double)motor_setup_data[0].ki, (double)motor_setup_data[0].kd},
             {(double)motor_setup_data[1].kp, (double)motor_setup_data[1].ki, (double)motor_setup_data[1].kd}
         };
-
-        // velocityモジュールの作成
-        static Stm32Velocity velocity_module[2] = {{&htim2, 0}, {&htim3, 0}};
-        // 速度計算
-        for (int i = 0; i < 2; i++){
-            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
-        }
 
         for (int i = 0; i < 2; i++)
         {
