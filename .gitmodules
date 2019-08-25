@@ -4,3 +4,6 @@
 [submodule "Src/canmd_manager"]
 	path = Src/canmd_manager
 	url = https://github.com/hajime0316/canmd_manager.git
+[submodule "Src/stm32_easy_can"]
+	path = Src/stm32_easy_can
+	url = https://github.com/hajime0316/stm32_easy_can.git
