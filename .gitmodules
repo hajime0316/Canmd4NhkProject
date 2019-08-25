@@ -13,3 +13,6 @@
 [submodule "Src/stm32_velocity"]
 	path = Src/stm32_velocity
 	url = https://github.com/hajime0316/stm32_velocity.git
+[submodule "Src/pid"]
+	path = Src/pid
+	url = https://github.com/hajime0316/pid.git
