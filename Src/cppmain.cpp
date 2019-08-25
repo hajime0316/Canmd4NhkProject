@@ -16,6 +16,7 @@ void setup(void) {
     canmd_manager_init();
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
+    stm32_easy_can_init(&hcan, 1, 0X7FF);   // TODO: 1をmd_idに変える
 }
 
 void loop(void) {
