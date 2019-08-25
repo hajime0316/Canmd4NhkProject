@@ -8,6 +8,8 @@
 
 // モジュールのインクルード
 #include "stm32_printf/stm32_printf.h"
+#include "canmd_manager/canmd_manager.h"
+#include "stm32_easy_can/stm32_easy_can.h"
 
 void setup(void) {
     // ハードウェアモジュールスタート
