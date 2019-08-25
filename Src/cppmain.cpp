@@ -10,6 +10,7 @@
 #include "stm32_printf/stm32_printf.h"
 #include "canmd_manager/canmd_manager.h"
 #include "stm32_easy_can/stm32_easy_can.h"
+#include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 
 void setup(void) {
     // ソフトウェアモジュール初期化
