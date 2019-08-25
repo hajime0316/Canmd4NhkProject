@@ -11,6 +11,7 @@
 #include "canmd_manager/canmd_manager.h"
 #include "stm32_easy_can/stm32_easy_can.h"
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
+#include "stm32_velocity/stm32_velocity.hpp"
 
 void setup(void) {
     // ソフトウェアモジュール初期化
