@@ -72,13 +72,13 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_ENC1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PEPin PEPin */
-  GPIO_InitStruct.Pin = DIP_SW1_Pin|DIP_SW2_Pin;
+  GPIO_InitStruct.Pin = DIP_SW_1_Pin|DIP_SW_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin */
-  GPIO_InitStruct.Pin = DIP_SW3_Pin|DIP_SW4_Pin;
+  GPIO_InitStruct.Pin = DIP_SW_3_Pin|DIP_SW_4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
