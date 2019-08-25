@@ -6,8 +6,12 @@
 #include "usart.h"
 #include "gpio.h"
 
-void setup(void) {
+// モジュールのインクルード
+#include "stm32_printf/stm32_printf.h"
 
+void setup(void) {
+    // ハードウェアモジュールスタート
+    stm32_printf_init(&huart1);
 }
 
 void loop(void) {
