@@ -1,3 +1,6 @@
 [submodule "Src/stm32_printf"]
 	path = Src/stm32_printf
 	url = https://github.com/hajime0316/stm32_printf.git
+[submodule "Src/canmd_manager"]
+	path = Src/canmd_manager
+	url = https://github.com/hajime0316/canmd_manager.git
