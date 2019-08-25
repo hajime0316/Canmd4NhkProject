@@ -24,7 +24,25 @@ void setup(void) {
 }
 
 void loop(void) {
+    int motor_control_data[2];
+    MotorSetupData motor_setup_data[2];
+    // モーターコントロールデータ取得
+    canmd_manager_get_motor_control_data(motor_control_data);
+    // PID制御のゲイン取得
+    canmd_manager_get_motor_setup_data(motor_setup_data);
 
+    // デバッグ出力
+    stm32_printf("%5d  %5d  ", motor_control_data[0], motor_control_data[1]);
+    // stm32_printf("%3d  ", md_id);
+    for(int i = 0; i < 2; i++) {
+        stm32_printf("|  ");
+        stm32_printf("%2d  ",motor_setup_data[i].control_mode);
+        stm32_printf("%4d  ", motor_setup_data[i].kp);
+        stm32_printf("%4d  ", motor_setup_data[i].ki);
+        stm32_printf("%4d  ", motor_setup_data[i].kd);
+        // stm32_printf("%4d", g_velocity[i]);
+    }
+    stm32_printf("\r\n");
 }
 
 //**************************
