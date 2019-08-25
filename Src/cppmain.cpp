@@ -123,7 +123,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         pwm0.update_duty(duty_rate[0]);
         pwm1.update_duty(duty_rate[1]);
 	}
-
 	// 100msecタイマ
 	if(htim->Instance == TIM7) {
 		if(canmd_manager_time_out_check()) {
