@@ -12,7 +12,21 @@
 #include "stm32_easy_can/stm32_easy_can.h"
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 
+static int md_id = 0;
+
 void setup(void) {
+    // md_id初期化
+    md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
+          | HAL_GPIO_ReadPin(DIP_SW_3_GPIO_Port, DIP_SW_3_Pin) << 2
+          | HAL_GPIO_ReadPin(DIP_SW_2_GPIO_Port, DIP_SW_2_Pin) << 1
+          | HAL_GPIO_ReadPin(DIP_SW_1_GPIO_Port, DIP_SW_1_Pin) << 0;
+
+    if(md_id == 0) {
+        md_id = 0X7FF;
+
+        // TODO: ここにLEDによるエラー表示の処理を入れる
+    }
+
     // ソフトウェアモジュール初期化
     canmd_manager_init();
     // ハードウェアモジュールスタート
