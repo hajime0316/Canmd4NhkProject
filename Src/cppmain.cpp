@@ -19,9 +19,16 @@ void setup(void) {
     stm32_printf_init(&huart1);
     stm32_easy_can_init(&hcan, 1, 0X7FF);   // TODO: 1をmd_idに変える
 
+    // 100msecタイマスタート
+    HAL_TIM_Base_Start_IT(&htim7);
+
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
     stm32_printf("Setup routine was finished!\r\n");
+
+    // 10msecタイマスタート
+    HAL_TIM_Base_Start_IT(&htim6);
+
 }
 
 void loop(void) {
