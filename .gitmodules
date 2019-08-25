@@ -7,3 +7,6 @@
 [submodule "Src/stm32_easy_can"]
 	path = Src/stm32_easy_can
 	url = https://github.com/hajime0316/stm32_easy_can.git
+[submodule "Src/stm32_antiphase_pwm"]
+	path = Src/stm32_antiphase_pwm
+	url = https://github.com/hajime0316/stm32_antiphase_pwm.git
