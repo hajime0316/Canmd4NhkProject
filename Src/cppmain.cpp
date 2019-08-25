@@ -55,7 +55,7 @@ void loop(void) {
 
     // デバッグ出力
     stm32_printf("%5d  %5d  ", motor_control_data[0], motor_control_data[1]);
-    // stm32_printf("%3d  ", md_id);
+    stm32_printf("%3d  ", md_id);
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
         stm32_printf("%2d  ",motor_setup_data[i].control_mode);
