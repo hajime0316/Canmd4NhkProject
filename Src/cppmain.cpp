@@ -10,7 +10,8 @@
 #include "stm32_printf/stm32_printf.h"
 
 void setup(void) {
-
+    // ハードウェアモジュールスタート
+    stm32_printf_init(&huart1);
 }
 
 void loop(void) {
