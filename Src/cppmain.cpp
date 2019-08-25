@@ -12,6 +12,8 @@
 #include "stm32_easy_can/stm32_easy_can.h"
 
 void setup(void) {
+    // ソフトウェアモジュール初期化
+    canmd_manager_init();
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
 }
