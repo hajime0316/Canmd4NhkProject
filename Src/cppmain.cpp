@@ -17,6 +17,10 @@ void setup(void) {
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
     stm32_easy_can_init(&hcan, 1, 0X7FF);   // TODO: 1をmd_idに変える
+
+    // セットアップルーチン
+    while(!canmd_manager_is_motor_setup_data_received());
+    stm32_printf("Setup routine was finished!\r\n");
 }
 
 void loop(void) {
