@@ -14,6 +14,8 @@
 #include "stm32_velocity/stm32_velocity.hpp"
 #include "pid/pid.hpp"
 
+#define CONTROL_LOOP_TIME 0.01 // sec
+
 static int md_id = 0;
 static int g_velocity[2] = {};
 
