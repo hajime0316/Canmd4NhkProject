@@ -12,6 +12,9 @@
 #include "stm32_easy_can/stm32_easy_can.h"
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 #include "stm32_velocity/stm32_velocity.hpp"
+#include "pid/pid.hpp"
+
+#define CONTROL_LOOP_TIME 0.01 // sec
 
 static int md_id = 0;
 static int g_velocity[2] = {};
@@ -97,11 +100,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         for (int i = 0; i < 2; i++){
             g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
         }
-/*
+
         // PIDモジュールを作成
         static Pid pid_module[2] = {
-            {(double)motor_setup_data[0].kp, (double)motor_setup_data[0].ki, (double)motor_setup_data[0].kd},
-            {(double)motor_setup_data[1].kp, (double)motor_setup_data[1].ki, (double)motor_setup_data[1].kd}
+            {
+                (double)motor_setup_data[0].kp,
+                (double)motor_setup_data[0].ki,
+                (double)motor_setup_data[0].kd,
+                CONTROL_LOOP_TIME
+            },
+            {
+                (double)motor_setup_data[1].kp,
+                (double)motor_setup_data[1].ki,
+                (double)motor_setup_data[1].kd,
+                CONTROL_LOOP_TIME
+            }
         };
 
         for (int i = 0; i < 2; i++)
@@ -129,13 +142,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             }
             
         }
-*/
-        // TODO: 上のコメントアウトを消して以下のコードを削除
-        for (int i = 0; i < 2; i++)
-        {
-            duty_rate[i] = motor_control_data[i] / (double)MOTOR_CONTROL_DATA_MAX;
-        }
-        // TODO: ここまで削除
 
 		// PWMのデューティー比更新
         static Stm32AntiphasePwm pwm0(&htim3, TIM_CHANNEL_4, TIM_CHANNEL_3);
