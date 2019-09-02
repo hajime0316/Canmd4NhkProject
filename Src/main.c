@@ -27,6 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "cppmain.hpp"
 
 /* USER CODE END Includes */
 
@@ -96,7 +97,10 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM19_Init();
   MX_USART1_UART_Init();
+  MX_TIM6_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
+  setup();
 
   /* USER CODE END 2 */
 
@@ -104,6 +108,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    loop();
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
