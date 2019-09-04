@@ -18,7 +18,7 @@
 
 static int md_id = 0;
 static int g_velocity[2] = {};
-
+static volatile int g_motor_control_data[2] = {};
 void setup(void) {
     // md_id初期化
     md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
@@ -89,6 +89,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 		// モータコントロールデータ取得
 		canmd_manager_get_motor_control_data(motor_control_data);
+
+        for(int i = 0; i < 2; i++){
+            g_motor_control_data[i]=motor_control_data[i];
+        }
 
         // モーターセットアップデータの取得
         MotorSetupData motor_setup_data[2];
