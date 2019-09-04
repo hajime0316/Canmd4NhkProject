@@ -19,6 +19,8 @@
 static int md_id = 0;
 static int g_velocity[2] = {};
 static volatile int g_motor_control_data[2] = {};
+static volatile double g_duty_rate[2] = {};
+
 void setup(void) {
     // md_id初期化
     md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
@@ -160,8 +162,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         static Stm32AntiphasePwm pwm0(&htim3, TIM_CHANNEL_4, TIM_CHANNEL_3);
         static Stm32AntiphasePwm pwm1(&htim3, TIM_CHANNEL_1, TIM_CHANNEL_2);
 
-        pwm0.update_duty(duty_rate[0]);
-        pwm1.update_duty(duty_rate[1]);
+        pwm0.update_duty(g_duty_rate[0] = duty_rate[0]);
+        pwm1.update_duty(g_duty_rate[1] = duty_rate[1]);
 	}
 	// 100msecタイマ
 	if(htim->Instance == TIM7) {
