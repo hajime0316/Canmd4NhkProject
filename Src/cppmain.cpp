@@ -129,7 +129,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             case PID_MODE:
                 // PID制御の計算
                 int pid_output;
-                pid_output = pid_module[i].pid_calc(velocity_module[i].get_velocity(), motor_control_data[i]);
+
+                // モーターコントロールデータが0の時は
+                // 強制的に出力を0にしてブレーキをかける
+                if(motor_control_data[i] == 0) {
+                    pid_module[i].reset_internal_state();
+                    pid_output = 0;
+                }
+                else {
+                    pid_output = pid_module[i].pid_calc(velocity_module[i].get_velocity(), motor_control_data[i]);
+                }
 
                 // duty比計算
                 duty_rate[i] = pid_output / (double)PID_OUTPUT_MAX;
