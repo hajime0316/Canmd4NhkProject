@@ -16,3 +16,6 @@
 [submodule "Src/pid"]
 	path = Src/pid
 	url = https://github.com/hajime0316/pid.git
+[submodule "Src/stm32_led"]
+	path = Src/stm32_led
+	url = https://github.com/hajime0316/stm32_led.git
