@@ -52,6 +52,8 @@ void setup(void) {
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
+    // 50msecタイマスタート
+    HAL_TIM_Base_Start_IT(&htim13);
 
     // Debug Output
     stm32_printf("\r\n...\r\n");
@@ -180,6 +182,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_TogglePin(LED_GP_GPIO_Port, LED_GP_Pin);
 		}
 	}
+    // 50msecタイマ
+    if(htim->Instance == TIM13) {
+    }
 }
 
 //**************************
