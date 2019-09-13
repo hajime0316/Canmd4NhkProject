@@ -13,6 +13,7 @@
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 #include "stm32_velocity/stm32_velocity.hpp"
 #include "pid/pid.hpp"
+#include "stm32_led/stm32_led.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
 
