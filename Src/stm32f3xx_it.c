@@ -59,6 +59,7 @@
 extern CAN_HandleTypeDef hcan;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
+extern TIM_HandleTypeDef htim13;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -211,6 +212,20 @@ void CAN_RX0_IRQHandler(void)
   /* USER CODE BEGIN CAN_RX0_IRQn 1 */
 
   /* USER CODE END CAN_RX0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM13 global interrupt.
+  */
+void TIM13_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM13_IRQn 0 */
+
+  /* USER CODE END TIM13_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim13);
+  /* USER CODE BEGIN TIM13_IRQn 1 */
+
+  /* USER CODE END TIM13_IRQn 1 */
 }
 
 /**
