@@ -13,13 +13,25 @@
 #include "stm32_antiphase_pwm/stm32_antiphase_pwm.hpp"
 #include "stm32_velocity/stm32_velocity.hpp"
 #include "pid/pid.hpp"
+#include "stm32_led/stm32_led.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
 
 static int md_id = 0;
 static int g_velocity[2] = {};
+static Stm32Led led_gp(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_RESET);
+static Stm32Led led_enc[2] = {
+    {LED_ENC2_GPIO_Port, LED_ENC2_Pin, GPIO_PIN_RESET},
+    {LED_ENC1_GPIO_Port, LED_ENC1_Pin, GPIO_PIN_RESET}
+};
 
 void setup(void) {
+    // LEDをすべて点灯させる
+    led_gp.setOn();
+    for (int i = 0; i < 2; i++) {
+        led_enc[i].setOn();
+    }
+    
     // md_id初期化
     md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
           | HAL_GPIO_ReadPin(DIP_SW_3_GPIO_Port, DIP_SW_3_Pin) << 2
@@ -40,6 +52,13 @@ void setup(void) {
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
+    // 50msecタイマスタート
+    HAL_TIM_Base_Start_IT(&htim13);
+
+    // LED_ENCを点滅させる
+    for (int i = 0; i < 2; i++) {
+        led_enc[i].setFlash(2);
+    }
 
     // Debug Output
     stm32_printf("\r\n...\r\n");
@@ -49,6 +68,25 @@ void setup(void) {
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
     stm32_printf("Setup routine was finished!\r\n");
+
+    // 初期化内容によってLED_ENCのステータスを変更
+    MotorSetupData motor_setup_data[2];
+    canmd_manager_get_motor_setup_data(motor_setup_data);
+    for (int i = 0; i < 2; i++) {
+        switch (motor_setup_data[i].control_mode)
+        {
+            case DUTY_RATE_MODE:
+                led_enc[i].setOff();
+                break;
+
+            case PID_MODE:
+                led_enc[i].setOn();
+                break;
+
+            default:
+                break;
+        }
+    }
 
     // 10msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim6);
@@ -162,12 +200,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	// 100msecタイマ
 	if(htim->Instance == TIM7) {
 		if(canmd_manager_time_out_check()) {
-			HAL_GPIO_WritePin(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_SET);
+            led_gp.setOn();
 		}
 		else {
-			HAL_GPIO_TogglePin(LED_GP_GPIO_Port, LED_GP_Pin);
+            led_gp.setFlash(4);
 		}
 	}
+    // 50msecタイマ
+    if(htim->Instance == TIM13) {
+        Stm32Led::interrupt_handler();
+    }
 }
 
 //**************************
