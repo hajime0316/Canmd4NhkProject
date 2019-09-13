@@ -64,15 +64,29 @@ void loop(void) {
     canmd_manager_get_motor_setup_data(motor_setup_data);
 
     // デバッグ出力
-    stm32_printf("%5d  %5d  ", motor_control_data[0], motor_control_data[1]);
     stm32_printf("%3d  ", md_id);
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
-        stm32_printf("%2d  ",motor_setup_data[i].control_mode);
+        stm32_printf("%5d  ", motor_control_data[i]);
+        stm32_printf("%4d  ", g_velocity[i]);
+        // コントロールモードの表示
+        switch (motor_setup_data[i].control_mode)
+        {
+            case DUTY_RATE_MODE:
+                stm32_printf("DUTY_RATE  ");
+                break;
+            
+            case PID_MODE:
+                stm32_printf("PID  ");
+                break;
+
+            default:
+                stm32_printf("XXXX  ");
+                break;
+        }
         stm32_printf("%4d  ", motor_setup_data[i].kp);
         stm32_printf("%4d  ", motor_setup_data[i].ki);
         stm32_printf("%4d  ", motor_setup_data[i].kd);
-        stm32_printf("%4d", g_velocity[i]);
     }
     stm32_printf("\r\n");
 }
