@@ -19,6 +19,11 @@
 
 static int md_id = 0;
 static int g_velocity[2] = {};
+static Stm32Led led_gp(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_RESET);
+static Stm32Led led_enc[2] = {
+    {LED_ENC2_GPIO_Port, LED_ENC2_Pin, GPIO_PIN_RESET},
+    {LED_ENC1_GPIO_Port, LED_ENC1_Pin, GPIO_PIN_RESET}
+};
 
 void setup(void) {
     // md_id初期化
