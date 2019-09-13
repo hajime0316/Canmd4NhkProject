@@ -55,6 +55,11 @@ void setup(void) {
     // 50msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim13);
 
+    // LED_ENCを点滅させる
+    for (int i = 0; i < 2; i++) {
+        led_enc[i].setFlash(2);
+    }
+
     // Debug Output
     stm32_printf("\r\n...\r\n");
     stm32_printf("md id = %d\r\n", md_id);
@@ -63,6 +68,25 @@ void setup(void) {
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
     stm32_printf("Setup routine was finished!\r\n");
+
+    // 初期化内容によってLED_ENCのステータスを変更
+    MotorSetupData motor_setup_data[2];
+    canmd_manager_get_motor_setup_data(motor_setup_data);
+    for (int i = 0; i < 2; i++) {
+        switch (motor_setup_data[i].control_mode)
+        {
+            case DUTY_RATE_MODE:
+                led_enc[i].setOff();
+                break;
+
+            case PID_MODE:
+                led_enc[i].setOn();
+                break;
+
+            default:
+                break;
+        }
+    }
 
     // 10msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim6);
