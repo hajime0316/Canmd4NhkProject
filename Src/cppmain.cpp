@@ -43,6 +43,7 @@ void setup(void) {
 
     // Debug Output
     stm32_printf("\r\n...\r\n");
+    // TODO: PWMの周波数の表示
     stm32_printf("md id = %d\r\n", md_id);
     stm32_printf("Setup routine start.\r\n");
 
