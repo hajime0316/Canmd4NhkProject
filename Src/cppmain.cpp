@@ -26,6 +26,12 @@ static Stm32Led led_enc[2] = {
 };
 
 void setup(void) {
+    // LEDをすべて点灯させる
+    led_gp.setOn();
+    for (int i = 0; i < 2; i++) {
+        led_enc[i].setOn();
+    }
+    
     // md_id初期化
     md_id = HAL_GPIO_ReadPin(DIP_SW_4_GPIO_Port, DIP_SW_4_Pin) << 3
           | HAL_GPIO_ReadPin(DIP_SW_3_GPIO_Port, DIP_SW_3_Pin) << 2
