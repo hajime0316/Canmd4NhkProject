@@ -176,10 +176,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	// 100msecタイマ
 	if(htim->Instance == TIM7) {
 		if(canmd_manager_time_out_check()) {
-			HAL_GPIO_WritePin(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_SET);
+            led_gp.setOn();
 		}
 		else {
-			HAL_GPIO_TogglePin(LED_GP_GPIO_Port, LED_GP_Pin);
+            led_gp.setFlash(4);
 		}
 	}
     // 50msecタイマ
