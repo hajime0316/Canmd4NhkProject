@@ -14,6 +14,7 @@
 #include "stm32_velocity/stm32_velocity.hpp"
 #include "pid/pid.hpp"
 #include "stm32_led/stm32_led.hpp"
+#include "stm32_access_flash_byte/stm32_access_flash_byte.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
 
