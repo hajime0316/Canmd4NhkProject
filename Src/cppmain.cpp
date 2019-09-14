@@ -285,3 +285,27 @@ void stm32_easy_can_interrupt_handler(void)
 
 	return;
 }
+
+//**************************
+//    外部割り込み
+//**************************
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == SW_ENC1_Pin) {
+        if (HAL_GPIO_ReadPin(SW_ENC1_GPIO_Port, SW_ENC1_Pin) == GPIO_PIN_RESET) {
+            // タイマリセット&スタート
+        }
+        else {
+            // タイマストップ&リセット
+        }
+    }
+
+    if (GPIO_Pin == SW_ENC2_Pin) {
+        if (HAL_GPIO_ReadPin(SW_ENC2_GPIO_Port, SW_ENC2_Pin) == GPIO_PIN_RESET) {
+            // タイマリセット&スタート
+        }
+        else {
+            // タイマストップ&リセット
+        }
+    }
+}
