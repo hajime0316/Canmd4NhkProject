@@ -19,3 +19,6 @@
 [submodule "Src/stm32_led"]
 	path = Src/stm32_led
 	url = https://github.com/hajime0316/stm32_led.git
+[submodule "Src/stm32_access_flash_byte"]
+	path = Src/stm32_access_flash_byte
+	url = https://github.com/hajime0316/stm32_access_flash_byte.git

@@ -14,6 +14,7 @@
 #include "stm32_velocity/stm32_velocity.hpp"
 #include "pid/pid.hpp"
 #include "stm32_led/stm32_led.hpp"
+#include "stm32_access_flash_byte/stm32_access_flash_byte.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
 
@@ -24,8 +25,14 @@ static Stm32Led led_enc[2] = {
     {LED_ENC2_GPIO_Port, LED_ENC2_Pin, GPIO_PIN_RESET},
     {LED_ENC1_GPIO_Port, LED_ENC1_Pin, GPIO_PIN_RESET}
 };
+static Stm32AccessFlashByte* flash_memory_enc[2];
 
 void setup(void) {
+    // flash_memory 初期化
+    for(int i = 0; i < 2; i++) {
+        flash_memory_enc[i] = new Stm32AccessFlashByte(i);
+    }
+
     // LEDをすべて点灯させる
     led_gp.setOn();
     for (int i = 0; i < 2; i++) {
