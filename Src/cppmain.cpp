@@ -63,9 +63,6 @@ void setup(void) {
     HAL_TIM_Base_Start_IT(&htim7);
     // 50msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim13);
-    // 1secタイマスタート（エンコーダスイッチ用）
-    HAL_TIM_Base_Start_IT(&htim16);
-    HAL_TIM_Base_Start_IT(&htim17);
 
     // LED_ENCを点滅させる
     for (int i = 0; i < 2; i++) {
