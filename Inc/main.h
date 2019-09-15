@@ -64,6 +64,7 @@ void Error_Handler(void);
 #define MAX_ENCODER_COUNT 2000
 #define SW_ENC1_Pin GPIO_PIN_1
 #define SW_ENC1_GPIO_Port GPIOF
+#define SW_ENC1_EXTI_IRQn EXTI1_IRQn
 #define LED_ENC1_Pin GPIO_PIN_2
 #define LED_ENC1_GPIO_Port GPIOA
 #define DIP_SW_1_Pin GPIO_PIN_8
@@ -78,6 +79,7 @@ void Error_Handler(void);
 #define LED_ENC2_GPIO_Port GPIOD
 #define SW_ENC2_Pin GPIO_PIN_8
 #define SW_ENC2_GPIO_Port GPIOA
+#define SW_ENC2_EXTI_IRQn EXTI9_5_IRQn
 #define LED_GP_Pin GPIO_PIN_7
 #define LED_GP_GPIO_Port GPIOF
 /* USER CODE BEGIN Private defines */

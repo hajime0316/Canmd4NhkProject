@@ -26,6 +26,8 @@ static Stm32Led led_enc[2] = {
     {LED_ENC1_GPIO_Port, LED_ENC1_Pin, GPIO_PIN_RESET}
 };
 static Stm32AccessFlashByte* flash_memory_enc[2];
+static GPIO_TypeDef* sw_enc_gpio_port[2] = {SW_ENC2_GPIO_Port, SW_ENC1_GPIO_Port};
+static uint16_t sw_enc_pin[2] = {SW_ENC2_Pin, SW_ENC1_Pin};
 
 void setup(void) {
     // flash_memory 初期化
@@ -284,4 +286,32 @@ void stm32_easy_can_interrupt_handler(void)
     stm32_easy_can_transmit_message(transmit_id, transmit_dlc, transmit_message);
 
 	return;
+}
+
+//**************************
+//    外部割り込み
+//**************************
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == sw_enc_pin[0]) {
+        if (HAL_GPIO_ReadPin(sw_enc_gpio_port[0], sw_enc_pin[0]) == GPIO_PIN_RESET) {
+            // タイマリセット&スタート
+            led_enc[0].setOn();     // TODO: タイマの処理を入れた後はこの行を消す
+        }
+        else {
+            // タイマストップ&リセット
+            led_enc[0].setOff();    // TODO: タイマの処理を入れた後はこの行を消す
+        }
+    }
+
+    if (GPIO_Pin == sw_enc_pin[1]) {
+        if (HAL_GPIO_ReadPin(sw_enc_gpio_port[1], sw_enc_pin[1]) == GPIO_PIN_RESET) {
+            // タイマリセット&スタート
+            led_enc[1].setOn();     // TODO: タイマの処理を入れた後はこの行を消す
+        }
+        else {
+            // タイマストップ&リセット
+            led_enc[1].setOff();    // TODO: タイマの処理を入れた後はこの行を消す
+        }
+    }
 }
