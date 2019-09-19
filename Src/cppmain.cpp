@@ -234,6 +234,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if(htim->Instance == TIM13) {
         Stm32Led::interrupt_handler();
     }
+    // 1secタイマ（エンコーダスイッチ1）
+    if(htim->Instance == TIM16) {
+        // flash memoryからエンコーダの回転方向取得
+        // エンコーダの回転方向を反転
+        // flash memoryにエンコーダ回転方向を保存
+        // LEDを点灯させる
+        led_enc[0].setOn();
+        // タイマを止める
+        HAL_TIM_Base_Stop_IT(&htim16);
+    }
+    // 1secタイマ（エンコーダスイッチ2）
+    if(htim->Instance == TIM17) {
+        // LEDを点灯させる
+        led_enc[1].setOn();
+        // タイマを止める
+        HAL_TIM_Base_Stop_IT(&htim17);
+    }
 }
 
 //**************************
@@ -296,22 +313,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     if (GPIO_Pin == sw_enc_pin[0]) {
         if (HAL_GPIO_ReadPin(sw_enc_gpio_port[0], sw_enc_pin[0]) == GPIO_PIN_RESET) {
             // タイマリセット&スタート
-            led_enc[0].setOn();     // TODO: タイマの処理を入れた後はこの行を消す
+            htim16.Instance->CNT = 0;
+            HAL_TIM_Base_Start_IT(&htim16);
         }
         else {
             // タイマストップ&リセット
-            led_enc[0].setOff();    // TODO: タイマの処理を入れた後はこの行を消す
+            HAL_TIM_Base_Stop_IT(&htim16);
+            htim16.Instance->CNT = 0;
         }
     }
 
     if (GPIO_Pin == sw_enc_pin[1]) {
         if (HAL_GPIO_ReadPin(sw_enc_gpio_port[1], sw_enc_pin[1]) == GPIO_PIN_RESET) {
             // タイマリセット&スタート
-            led_enc[1].setOn();     // TODO: タイマの処理を入れた後はこの行を消す
+            htim17.Instance->CNT = 0;
+            HAL_TIM_Base_Start_IT(&htim17);
         }
         else {
             // タイマストップ&リセット
-            led_enc[1].setOff();    // TODO: タイマの処理を入れた後はこの行を消す
+            HAL_TIM_Base_Stop_IT(&htim17);
+            htim17.Instance->CNT = 0;
         }
     }
 }

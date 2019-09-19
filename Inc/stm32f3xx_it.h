@@ -59,6 +59,8 @@ void SysTick_Handler(void);
 void EXTI1_IRQHandler(void);
 void CAN_RX0_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);
+void TIM16_IRQHandler(void);
+void TIM17_IRQHandler(void);
 void TIM13_IRQHandler(void);
 void TIM6_DAC1_IRQHandler(void);
 void TIM7_IRQHandler(void);
