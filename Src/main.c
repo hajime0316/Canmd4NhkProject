@@ -100,8 +100,6 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM7_Init();
   MX_TIM13_Init();
-  MX_TIM16_Init();
-  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   setup();
 
