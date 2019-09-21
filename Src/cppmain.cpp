@@ -340,3 +340,19 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         }
     }
 }
+
+void sw_enc_0_event_callback() {
+    // flash memoryからエンコーダの回転方向取得
+    // エンコーダの回転方向を反転
+    // flash memoryにエンコーダ回転方向を保存
+    // LEDを点灯させる
+    led_enc[0].setOn();
+}
+
+void sw_enc_1_event_callback() {
+    // flash memoryからエンコーダの回転方向取得
+    // エンコーダの回転方向を反転
+    // flash memoryにエンコーダ回転方向を保存
+    // LEDを点灯させる
+    led_enc[1].setOn();
+}
