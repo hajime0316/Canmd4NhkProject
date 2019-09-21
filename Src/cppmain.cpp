@@ -300,38 +300,6 @@ void stm32_easy_can_interrupt_handler(void)
 	return;
 }
 
-//**************************
-//    外部割り込み
-//**************************
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == sw_enc_pin[0]) {
-        if (HAL_GPIO_ReadPin(sw_enc_gpio_port[0], sw_enc_pin[0]) == GPIO_PIN_RESET) {
-            // タイマリセット&スタート
-            htim16.Instance->CNT = 0;
-            HAL_TIM_Base_Start_IT(&htim16);
-        }
-        else {
-            // タイマストップ&リセット
-            HAL_TIM_Base_Stop_IT(&htim16);
-            htim16.Instance->CNT = 0;
-        }
-    }
-
-    if (GPIO_Pin == sw_enc_pin[1]) {
-        if (HAL_GPIO_ReadPin(sw_enc_gpio_port[1], sw_enc_pin[1]) == GPIO_PIN_RESET) {
-            // タイマリセット&スタート
-            htim17.Instance->CNT = 0;
-            HAL_TIM_Base_Start_IT(&htim17);
-        }
-        else {
-            // タイマストップ&リセット
-            HAL_TIM_Base_Stop_IT(&htim17);
-            htim17.Instance->CNT = 0;
-        }
-    }
-}
-
 void sw_enc_0_event_callback() {
     // flash memoryからエンコーダの回転方向取得
     // エンコーダの回転方向を反転
