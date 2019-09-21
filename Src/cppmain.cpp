@@ -15,6 +15,7 @@
 #include "pid/pid.hpp"
 #include "stm32_led/stm32_led.hpp"
 #include "stm32_access_flash_byte/stm32_access_flash_byte.hpp"
+#include "stm32_long_push_switch/stm32_long_push_switch.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
 
