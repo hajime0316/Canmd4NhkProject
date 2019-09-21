@@ -246,23 +246,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if(htim->Instance == TIM13) {
         Stm32Led::interrupt_handler();
     }
-    // 1secタイマ（エンコーダスイッチ1）
-    if(htim->Instance == TIM16) {
-        // flash memoryからエンコーダの回転方向取得
-        // エンコーダの回転方向を反転
-        // flash memoryにエンコーダ回転方向を保存
-        // LEDを点灯させる
-        led_enc[0].setOn();
-        // タイマを止める
-        HAL_TIM_Base_Stop_IT(&htim16);
-    }
-    // 1secタイマ（エンコーダスイッチ2）
-    if(htim->Instance == TIM17) {
-        // LEDを点灯させる
-        led_enc[1].setOn();
-        // タイマを止める
-        HAL_TIM_Base_Stop_IT(&htim17);
-    }
 }
 
 //**************************
