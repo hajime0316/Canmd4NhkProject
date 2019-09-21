@@ -240,6 +240,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else {
             led_gp.setFlash(4);
 		}
+        Stm32LongPushSwitch::interrupt_handler();
 	}
     // 50msecタイマ
     if(htim->Instance == TIM13) {
