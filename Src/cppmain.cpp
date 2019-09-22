@@ -33,7 +33,6 @@ static Stm32AccessFlashByte* flash_memory_enc[2];
 static GPIO_TypeDef* sw_enc_gpio_port[2] = {SW_ENC2_GPIO_Port, SW_ENC1_GPIO_Port};
 static uint16_t sw_enc_pin[2] = {SW_ENC2_Pin, SW_ENC1_Pin};
 static Stm32LongPushSwitch* sw_enc[2];
-// TODO: default callback functionの作成
 
 void setup(void) {
     // flash_memory 初期化
