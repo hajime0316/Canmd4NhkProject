@@ -65,7 +65,7 @@ void setup(void) {
     stm32_printf_init(&huart1);
     stm32_easy_can_init(&hcan, md_id, 0X7FF);
     for (int i = 0; i < 2; i++) {
-        sw_enc[i] = new Stm32LongPushSwitch(sw_enc_gpio_port[i], sw_enc_pin[i], GPIO_PIN_RESET, 9);
+        sw_enc[i] = new Stm32LongPushSwitch(sw_enc_gpio_port[i], sw_enc_pin[i], GPIO_PIN_RESET, 10);
     }
     sw_enc[0]->set_event_callback(sw_enc_0_event_callback);
     sw_enc[1]->set_event_callback(sw_enc_1_event_callback);
