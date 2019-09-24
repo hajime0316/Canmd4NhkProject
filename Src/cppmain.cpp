@@ -130,7 +130,7 @@ void loop(void) {
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
         stm32_printf("%5d  ", motor_control_data[i]);
-        stm32_printf("%4d  ", g_velocity[i]);
+        stm32_printf("%4d  ", velocity[i]->get_velocity());
         // コントロールモードの表示
         switch (motor_setup_data[i].control_mode)
         {
