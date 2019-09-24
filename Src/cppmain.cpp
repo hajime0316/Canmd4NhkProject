@@ -23,7 +23,6 @@ void sw_enc_0_event_callback();
 void sw_enc_1_event_callback();
 
 static int md_id = 0;
-static int g_velocity[2] = {};
 static Stm32Velocity* velocity[2];
 static Stm32Led led_gp(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_RESET);
 static Stm32Led led_enc[2] = {
