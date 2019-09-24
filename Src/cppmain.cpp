@@ -303,18 +303,28 @@ void stm32_easy_can_interrupt_handler(void)
 	return;
 }
 
+//********************************************
+//    プッシュスイッチ0のイベントコールバック
+//********************************************
 void sw_enc_0_event_callback() {
-    // flash memoryからエンコーダの回転方向取得
     // エンコーダの回転方向を反転
-    // flash memoryにエンコーダ回転方向を保存
+    velocity[0]->reverse_rotation();
+    // flash memoryの値を反転
+    unsigned char temp = flash_memory_enc[0]->get();
+    flash_memory_enc[0]->save(temp);
     // LEDを点灯させる
     led_enc[0].setOn();
 }
 
+//********************************************
+//    プッシュスイッチ1のイベントコールバック
+//********************************************
 void sw_enc_1_event_callback() {
-    // flash memoryからエンコーダの回転方向取得
     // エンコーダの回転方向を反転
-    // flash memoryにエンコーダ回転方向を保存
+    velocity[1]->reverse_rotation();
+    // flash memoryの値を反転
+    unsigned char temp = flash_memory_enc[1]->get();
+    flash_memory_enc[1]->save(temp);
     // LEDを点灯させる
     led_enc[1].setOn();
 }
