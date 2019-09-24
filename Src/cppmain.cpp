@@ -313,7 +313,18 @@ void sw_enc_0_event_callback() {
     unsigned char temp = flash_memory_enc[0]->get();
     flash_memory_enc[0]->save(temp);
     // LEDを点灯させる
-    led_enc[0].setOn();
+    switch (led_enc[0].getState()) {
+        case Stm32Led::LED_ON:
+            led_enc[0].offTemporary(20);
+            break;
+
+        case Stm32Led::LED_OFF:
+        case Stm32Led::LED_FLASH:
+            led_enc[0].onTemporary(20);
+            break;
+        default:
+            break;
+    }
 }
 
 //********************************************
@@ -326,5 +337,17 @@ void sw_enc_1_event_callback() {
     unsigned char temp = flash_memory_enc[1]->get();
     flash_memory_enc[1]->save(temp);
     // LEDを点灯させる
-    led_enc[1].setOn();
+    switch (led_enc[1].getState()) {
+        case Stm32Led::LED_ON:
+            led_enc[1].offTemporary(20);
+            break;
+
+        case Stm32Led::LED_OFF:
+        case Stm32Led::LED_FLASH:
+            led_enc[1].onTemporary(20);
+            break;
+
+        default:
+            break;
+    }
 }
