@@ -15,8 +15,12 @@
 #include "pid/pid.hpp"
 #include "stm32_led/stm32_led.hpp"
 #include "stm32_access_flash_byte/stm32_access_flash_byte.hpp"
+#include "stm32_long_push_switch/stm32_long_push_switch.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
+
+void sw_enc_0_event_callback();
+void sw_enc_1_event_callback();
 
 static int md_id = 0;
 static int g_velocity[2] = {};
@@ -28,6 +32,7 @@ static Stm32Led led_enc[2] = {
 static Stm32AccessFlashByte* flash_memory_enc[2];
 static GPIO_TypeDef* sw_enc_gpio_port[2] = {SW_ENC2_GPIO_Port, SW_ENC1_GPIO_Port};
 static uint16_t sw_enc_pin[2] = {SW_ENC2_Pin, SW_ENC1_Pin};
+static Stm32LongPushSwitch* sw_enc[2];
 
 void setup(void) {
     // flash_memory 初期化
@@ -58,6 +63,11 @@ void setup(void) {
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
     stm32_easy_can_init(&hcan, md_id, 0X7FF);
+    for (int i = 0; i < 2; i++) {
+        sw_enc[i] = new Stm32LongPushSwitch(sw_enc_gpio_port[i], sw_enc_pin[i], GPIO_PIN_RESET, 10);
+    }
+    sw_enc[0]->set_event_callback(sw_enc_0_event_callback);
+    sw_enc[1]->set_event_callback(sw_enc_1_event_callback);
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
@@ -229,27 +239,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else {
             led_gp.setFlash(4);
 		}
+        Stm32LongPushSwitch::interrupt_handler();
 	}
     // 50msecタイマ
     if(htim->Instance == TIM13) {
         Stm32Led::interrupt_handler();
-    }
-    // 1secタイマ（エンコーダスイッチ1）
-    if(htim->Instance == TIM16) {
-        // flash memoryからエンコーダの回転方向取得
-        // エンコーダの回転方向を反転
-        // flash memoryにエンコーダ回転方向を保存
-        // LEDを点灯させる
-        led_enc[0].setOn();
-        // タイマを止める
-        HAL_TIM_Base_Stop_IT(&htim16);
-    }
-    // 1secタイマ（エンコーダスイッチ2）
-    if(htim->Instance == TIM17) {
-        // LEDを点灯させる
-        led_enc[1].setOn();
-        // タイマを止める
-        HAL_TIM_Base_Stop_IT(&htim17);
     }
 }
 
@@ -305,34 +299,18 @@ void stm32_easy_can_interrupt_handler(void)
 	return;
 }
 
-//**************************
-//    外部割り込み
-//**************************
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == sw_enc_pin[0]) {
-        if (HAL_GPIO_ReadPin(sw_enc_gpio_port[0], sw_enc_pin[0]) == GPIO_PIN_RESET) {
-            // タイマリセット&スタート
-            htim16.Instance->CNT = 0;
-            HAL_TIM_Base_Start_IT(&htim16);
-        }
-        else {
-            // タイマストップ&リセット
-            HAL_TIM_Base_Stop_IT(&htim16);
-            htim16.Instance->CNT = 0;
-        }
-    }
+void sw_enc_0_event_callback() {
+    // flash memoryからエンコーダの回転方向取得
+    // エンコーダの回転方向を反転
+    // flash memoryにエンコーダ回転方向を保存
+    // LEDを点灯させる
+    led_enc[0].setOn();
+}
 
-    if (GPIO_Pin == sw_enc_pin[1]) {
-        if (HAL_GPIO_ReadPin(sw_enc_gpio_port[1], sw_enc_pin[1]) == GPIO_PIN_RESET) {
-            // タイマリセット&スタート
-            htim17.Instance->CNT = 0;
-            HAL_TIM_Base_Start_IT(&htim17);
-        }
-        else {
-            // タイマストップ&リセット
-            HAL_TIM_Base_Stop_IT(&htim17);
-            htim17.Instance->CNT = 0;
-        }
-    }
+void sw_enc_1_event_callback() {
+    // flash memoryからエンコーダの回転方向取得
+    // エンコーダの回転方向を反転
+    // flash memoryにエンコーダ回転方向を保存
+    // LEDを点灯させる
+    led_enc[1].setOn();
 }
