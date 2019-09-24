@@ -211,7 +211,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                     pid_output = 0;
                 }
                 else {
-                    pid_output = pid_module[i].pid_calc(velocity_module[i].get_velocity(), motor_control_data[i]);
+                    pid_output = pid_module[i].pid_calc(
+                        velocity[i]->get_velocity(),
+                        motor_control_data[i]);
                 }
 
                 // duty比計算
