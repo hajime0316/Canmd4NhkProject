@@ -42,7 +42,7 @@ void setup(void) {
 
     // velocityモジュール初期化
     velocity[0] = new Stm32Velocity(&htim4, flash_memory_enc[0]->get());
-    velocity[1] = new Stm32Velocity(&htim19, flash_memory_enc[0]->get());    
+    velocity[1] = new Stm32Velocity(&htim19, flash_memory_enc[1]->get());    
 
     // LEDをすべて点灯させる
     led_gp.setOn();
@@ -311,7 +311,7 @@ void sw_enc_0_event_callback() {
     velocity[0]->reverse_rotation();
     // flash memoryの値を反転
     unsigned char temp = flash_memory_enc[0]->get();
-    flash_memory_enc[0]->save(temp);
+    flash_memory_enc[0]->save(!temp);
     // LEDを点灯させる
     switch (led_enc[0].getState()) {
         case Stm32Led::LED_ON:
@@ -335,7 +335,7 @@ void sw_enc_1_event_callback() {
     velocity[1]->reverse_rotation();
     // flash memoryの値を反転
     unsigned char temp = flash_memory_enc[1]->get();
-    flash_memory_enc[1]->save(temp);
+    flash_memory_enc[1]->save(!temp);
     // LEDを点灯させる
     switch (led_enc[1].getState()) {
         case Stm32Led::LED_ON:
