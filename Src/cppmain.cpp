@@ -40,6 +40,10 @@ void setup(void) {
         flash_memory_enc[i] = new Stm32AccessFlashByte(i);
     }
 
+    // velocityモジュール初期化
+    velocity[0] = new Stm32Velocity(&htim4, flash_memory_enc[0]->get());
+    velocity[1] = new Stm32Velocity(&htim19, flash_memory_enc[0]->get());    
+
     // LEDをすべて点灯させる
     led_gp.setOn();
     for (int i = 0; i < 2; i++) {
