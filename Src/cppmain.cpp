@@ -172,7 +172,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
         // 速度計算
         for (int i = 0; i < 2; i++){
-            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
+            velocity[i]->periodic_calculate_velocity();
         }
 
         // PIDモジュールを作成
