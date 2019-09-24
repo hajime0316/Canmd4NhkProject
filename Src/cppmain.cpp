@@ -23,7 +23,7 @@ void sw_enc_0_event_callback();
 void sw_enc_1_event_callback();
 
 static int md_id = 0;
-static int g_velocity[2] = {};
+static Stm32Velocity* velocity[2];
 static Stm32Led led_gp(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_RESET);
 static Stm32Led led_enc[2] = {
     {LED_ENC2_GPIO_Port, LED_ENC2_Pin, GPIO_PIN_RESET},
@@ -39,6 +39,10 @@ void setup(void) {
     for(int i = 0; i < 2; i++) {
         flash_memory_enc[i] = new Stm32AccessFlashByte(i);
     }
+
+    // velocityモジュール初期化
+    velocity[0] = new Stm32Velocity(&htim4, flash_memory_enc[0]->get());
+    velocity[1] = new Stm32Velocity(&htim19, flash_memory_enc[0]->get());    
 
     // LEDをすべて点灯させる
     led_gp.setOn();
@@ -126,7 +130,7 @@ void loop(void) {
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
         stm32_printf("%5d  ", motor_control_data[i]);
-        stm32_printf("%4d  ", g_velocity[i]);
+        stm32_printf("%4d  ", velocity[i]->get_velocity());
         // コントロールモードの表示
         switch (motor_setup_data[i].control_mode)
         {
@@ -166,11 +170,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         MotorSetupData motor_setup_data[2];
         canmd_manager_get_motor_setup_data(motor_setup_data);
 
-        // velocityモジュールの作成
-        static Stm32Velocity velocity_module[2] = {{&htim4, 0}, {&htim19, 0}};
         // 速度計算
         for (int i = 0; i < 2; i++){
-            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
+            velocity[i]->periodic_calculate_velocity();
         }
 
         // PIDモジュールを作成
@@ -209,7 +211,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                     pid_output = 0;
                 }
                 else {
-                    pid_output = pid_module[i].pid_calc(velocity_module[i].get_velocity(), motor_control_data[i]);
+                    pid_output = pid_module[i].pid_calc(
+                        velocity[i]->get_velocity(),
+                        motor_control_data[i]);
                 }
 
                 // duty比計算
