@@ -14,18 +14,36 @@
 #include "stm32_velocity/stm32_velocity.hpp"
 #include "pid/pid.hpp"
 #include "stm32_led/stm32_led.hpp"
+#include "stm32_access_flash_byte/stm32_access_flash_byte.hpp"
+#include "stm32_long_push_switch/stm32_long_push_switch.hpp"
 
 #define CONTROL_LOOP_TIME 0.01 // sec
 
+void sw_enc_0_event_callback();
+void sw_enc_1_event_callback();
+
 static int md_id = 0;
-static int g_velocity[2] = {};
+static Stm32Velocity* velocity[2];
 static Stm32Led led_gp(LED_GP_GPIO_Port, LED_GP_Pin, GPIO_PIN_RESET);
 static Stm32Led led_enc[2] = {
     {LED_ENC2_GPIO_Port, LED_ENC2_Pin, GPIO_PIN_RESET},
     {LED_ENC1_GPIO_Port, LED_ENC1_Pin, GPIO_PIN_RESET}
 };
+static Stm32AccessFlashByte* flash_memory_enc[2];
+static GPIO_TypeDef* sw_enc_gpio_port[2] = {SW_ENC2_GPIO_Port, SW_ENC1_GPIO_Port};
+static uint16_t sw_enc_pin[2] = {SW_ENC2_Pin, SW_ENC1_Pin};
+static Stm32LongPushSwitch* sw_enc[2];
 
 void setup(void) {
+    // flash_memory 初期化
+    for(int i = 0; i < 2; i++) {
+        flash_memory_enc[i] = new Stm32AccessFlashByte(i);
+    }
+
+    // velocityモジュール初期化
+    velocity[0] = new Stm32Velocity(&htim4, flash_memory_enc[0]->get());
+    velocity[1] = new Stm32Velocity(&htim19, flash_memory_enc[1]->get());    
+
     // LEDをすべて点灯させる
     led_gp.setOn();
     for (int i = 0; i < 2; i++) {
@@ -49,6 +67,11 @@ void setup(void) {
     // ハードウェアモジュールスタート
     stm32_printf_init(&huart1);
     stm32_easy_can_init(&hcan, md_id, 0X7FF);
+    for (int i = 0; i < 2; i++) {
+        sw_enc[i] = new Stm32LongPushSwitch(sw_enc_gpio_port[i], sw_enc_pin[i], GPIO_PIN_RESET, 10);
+    }
+    sw_enc[0]->set_event_callback(sw_enc_0_event_callback);
+    sw_enc[1]->set_event_callback(sw_enc_1_event_callback);
 
     // 100msecタイマスタート
     HAL_TIM_Base_Start_IT(&htim7);
@@ -107,7 +130,7 @@ void loop(void) {
     for(int i = 0; i < 2; i++) {
         stm32_printf("|  ");
         stm32_printf("%5d  ", motor_control_data[i]);
-        stm32_printf("%4d  ", g_velocity[i]);
+        stm32_printf("%4d  ", velocity[i]->get_velocity());
         // コントロールモードの表示
         switch (motor_setup_data[i].control_mode)
         {
@@ -147,11 +170,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         MotorSetupData motor_setup_data[2];
         canmd_manager_get_motor_setup_data(motor_setup_data);
 
-        // velocityモジュールの作成
-        static Stm32Velocity velocity_module[2] = {{&htim4, 0}, {&htim19, 0}};
         // 速度計算
         for (int i = 0; i < 2; i++){
-            g_velocity[i] = velocity_module[i].periodic_calculate_velocity();
+            velocity[i]->periodic_calculate_velocity();
         }
 
         // PIDモジュールを作成
@@ -190,7 +211,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                     pid_output = 0;
                 }
                 else {
-                    pid_output = pid_module[i].pid_calc(velocity_module[i].get_velocity(), motor_control_data[i]);
+                    pid_output = pid_module[i].pid_calc(
+                        velocity[i]->get_velocity(),
+                        motor_control_data[i]);
                 }
 
                 // duty比計算
@@ -220,6 +243,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		else {
             led_gp.setFlash(4);
 		}
+        Stm32LongPushSwitch::interrupt_handler();
 	}
     // 50msecタイマ
     if(htim->Instance == TIM13) {
@@ -277,4 +301,53 @@ void stm32_easy_can_interrupt_handler(void)
     stm32_easy_can_transmit_message(transmit_id, transmit_dlc, transmit_message);
 
 	return;
+}
+
+//********************************************
+//    プッシュスイッチ0のイベントコールバック
+//********************************************
+void sw_enc_0_event_callback() {
+    // エンコーダの回転方向を反転
+    velocity[0]->reverse_rotation();
+    // flash memoryの値を反転
+    unsigned char temp = flash_memory_enc[0]->get();
+    flash_memory_enc[0]->save(!temp);
+    // LEDを点灯させる
+    switch (led_enc[0].getState()) {
+        case Stm32Led::LED_ON:
+            led_enc[0].offTemporary(20);
+            break;
+
+        case Stm32Led::LED_OFF:
+        case Stm32Led::LED_FLASH:
+            led_enc[0].onTemporary(20);
+            break;
+        default:
+            break;
+    }
+}
+
+//********************************************
+//    プッシュスイッチ1のイベントコールバック
+//********************************************
+void sw_enc_1_event_callback() {
+    // エンコーダの回転方向を反転
+    velocity[1]->reverse_rotation();
+    // flash memoryの値を反転
+    unsigned char temp = flash_memory_enc[1]->get();
+    flash_memory_enc[1]->save(!temp);
+    // LEDを点灯させる
+    switch (led_enc[1].getState()) {
+        case Stm32Led::LED_ON:
+            led_enc[1].offTemporary(20);
+            break;
+
+        case Stm32Led::LED_OFF:
+        case Stm32Led::LED_FLASH:
+            led_enc[1].onTemporary(20);
+            break;
+
+        default:
+            break;
+    }
 }
