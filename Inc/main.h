@@ -58,9 +58,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define PWM_PERIOD 240
-#define PWM_DUTY_ZERO 120
-#define PWM_DUTY_MAX 96
+#define PWM_PERIOD 1200
+#define PWM_DUTY_ZERO 600
+#define PWM_DUTY_MAX 576
 #define MAX_ENCODER_COUNT 2000
 #define SW_ENC1_Pin GPIO_PIN_1
 #define SW_ENC1_GPIO_Port GPIOF
