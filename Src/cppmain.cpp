@@ -56,16 +56,25 @@ void setup(void) {
           | HAL_GPIO_ReadPin(DIP_SW_2_GPIO_Port, DIP_SW_2_Pin) << 1
           | HAL_GPIO_ReadPin(DIP_SW_1_GPIO_Port, DIP_SW_1_Pin) << 0;
 
-    if(md_id == 0) {
-        md_id = 0X7FF;
-
-        // TODO: ここにLEDによるエラー表示の処理を入れる
-    }
-
     // ソフトウェアモジュール初期化
     canmd_manager_init();
-    // ハードウェアモジュールスタート
+
+    // printfモジュール初期化
     stm32_printf_init(&huart1);
+
+    // Debug Output
+    stm32_printf("\r\n...\r\n");
+    // TODO: PWMの周波数の表示
+    stm32_printf("md id = %d\r\n", md_id);
+
+    // md_idのチェック
+    // md_id = 0なら，プログラムを止める
+    if(md_id == 0) {
+        stm32_printf("Invalid md_id. Process is stoped.\r\n");
+        while (1);
+    }
+
+    // easy_canモジュールの初期化
     stm32_easy_can_init(&hcan, md_id, 0X7FF);
     for (int i = 0; i < 2; i++) {
         sw_enc[i] = new Stm32LongPushSwitch(sw_enc_gpio_port[i], sw_enc_pin[i], GPIO_PIN_RESET, 10);
@@ -80,15 +89,12 @@ void setup(void) {
 
     // LED_ENCを点滅させる
     for (int i = 0; i < 2; i++) {
-        led_enc[i].setFlash(2);
+        led_enc[i].setFlash(PWM_PERIOD / 120);
+        // PWM_PERIOD / 120 = 2  (PWM周波数が50kHzの時)
+        //                    10 (PWM周波数が10kHzの時)
     }
 
-    // Debug Output
-    stm32_printf("\r\n...\r\n");
-    // TODO: PWMの周波数の表示
-    stm32_printf("md id = %d\r\n", md_id);
     stm32_printf("Setup routine start.\r\n");
-
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
     stm32_printf("Setup routine was finished!\r\n");
