@@ -84,9 +84,8 @@ void setup(void) {
 
     // md_idのチェック
     if(md_id == 0) {
-        md_id = 0X7FF;
-
-        // TODO: ここにLEDによるエラー表示の処理を入れる
+        stm32_printf("Invalid md_id. Process is stoped.\r\n");
+        while (1);
     }
 
     stm32_printf("Setup routine start.\r\n");
