@@ -56,12 +56,6 @@ void setup(void) {
           | HAL_GPIO_ReadPin(DIP_SW_2_GPIO_Port, DIP_SW_2_Pin) << 1
           | HAL_GPIO_ReadPin(DIP_SW_1_GPIO_Port, DIP_SW_1_Pin) << 0;
 
-    if(md_id == 0) {
-        md_id = 0X7FF;
-
-        // TODO: ここにLEDによるエラー表示の処理を入れる
-    }
-
     // ソフトウェアモジュール初期化
     canmd_manager_init();
     // ハードウェアモジュールスタート
@@ -87,8 +81,15 @@ void setup(void) {
     stm32_printf("\r\n...\r\n");
     // TODO: PWMの周波数の表示
     stm32_printf("md id = %d\r\n", md_id);
-    stm32_printf("Setup routine start.\r\n");
 
+    // md_idのチェック
+    // md_id = 0なら，プログラムを止める
+    if(md_id == 0) {
+        stm32_printf("Invalid md_id. Process is stoped.\r\n");
+        while (1);
+    }
+
+    stm32_printf("Setup routine start.\r\n");
     // セットアップルーチン
     while(!canmd_manager_is_motor_setup_data_received());
     stm32_printf("Setup routine was finished!\r\n");
