@@ -89,7 +89,9 @@ void setup(void) {
 
     // LED_ENCを点滅させる
     for (int i = 0; i < 2; i++) {
-        led_enc[i].setFlash(2);
+        led_enc[i].setFlash(PWM_PERIOD / 120);
+        // PWM_PERIOD / 120 = 2  (PWM周波数が50kHzの時)
+        //                    10 (PWM周波数が10kHzの時)
     }
 
     stm32_printf("Setup routine start.\r\n");
